@@ -1,0 +1,5 @@
+manim==0.18.1
+edge-tts==6.1.12
+gTTS==2.5.1
+requests==2.32.3
+Pillow==10.4.0
