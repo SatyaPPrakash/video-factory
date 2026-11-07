@@ -1,6 +1,6 @@
 import os, sys, time, requests
 
-GEMINI = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash"]
+GEMINI = ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-3.5-flash"]
 GROQ_PREFERRED = ["llama-3.3-70b-versatile", "llama-3.1-70b-versatile", "llama-3.1-8b-instant"]
 _last = [0.0]
 
@@ -31,9 +31,10 @@ def _groq_models():
                      timeout=60)
     if r.status_code != 200:
         raise RuntimeError(f"HTTP {r.status_code}: {r.text[:300]}")
-    ids = [m["id"] for m in r.json()["data"]]
+    ids = [m["id"] for m in r.json().get("data", [])]
+    _log(f"groq available ({len(ids)}): {ids}")
     picked = [m for m in GROQ_PREFERRED if m in ids]
-    return picked or [i for i in ids if "llama" in i and "guard" not in i][:3]
+    return picked or [i for i in ids if "llama" in i and "guard" not in i and "whisper" not in i][:3]
 
 def _groq(prompt, model, json_mode):
     body = {"model": model,
@@ -62,7 +63,6 @@ def ask(prompt, json_mode=False):
     if os.environ.get("GROQ_API_KEY"):
         try:
             models = _groq_models()
-            _log(f"groq models to try: {models}")
         except Exception as e:
             models = []
             errors.append(f"groq models list: {e}")
