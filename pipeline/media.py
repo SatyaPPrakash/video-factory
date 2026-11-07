@@ -1,6 +1,5 @@
 import pathlib, subprocess
-
-W, H, FPS = 1280, 720, 25
+from pipeline.config import W, H, FPS
 
 def run(args):
     subprocess.run(args, check=True, capture_output=True)

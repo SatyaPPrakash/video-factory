@@ -11,6 +11,10 @@ on:
         type: choice
         options: [drawn, vector]
         default: drawn
+      format:
+        type: choice
+        options: [landscape, portrait]
+        default: landscape
       scenes:
         description: Number of scenes (use 3 to test)
         default: "45"
@@ -42,6 +46,7 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Build video
         env:
+          FORMAT: ${{ github.event.inputs.format }}
           TOPIC: ${{ github.event.inputs.topic }}
           STYLE: ${{ github.event.inputs.style || 'drawn' }}
           SCENES: ${{ github.event.inputs.scenes || '45' }}
